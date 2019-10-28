@@ -104,7 +104,7 @@ def animalPredictProb(x):
     return list(model.predict(np.array([x]))[0])
 
 
-synthesizer = Synthesizer(7, 16, 1, 100, 0.9, 100,
+synthesizer = Synthesizer(7, 16, 1, 100, 0.85, 100,
                           animalRandomizeFunction, animalPredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb

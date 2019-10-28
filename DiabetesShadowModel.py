@@ -1,19 +1,17 @@
-from modules.synthesizer import Synthesizer
+from modules.ModelExtraction.QuerySynthesis import Synthesizer
 import pandas as pd
 import numpy as np
 import random as random
-import csv
 import pickle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Conv2D,MaxPooling2D, Flatten
+from keras.layers import Dense, Activation
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.externals.six import StringIO  
 from sklearn.tree import export_graphviz
 from sklearn.metrics import accuracy_score
 from IPython.display import Image  
 import pydotplus
-from ast import literal_eval
 
 #ignore warnings
 import warnings
@@ -24,7 +22,7 @@ warnings.filterwarnings('ignore')
 #########################################################
 
 #Loading dataset
-data = pd.read_csv('classifiers/diabetes/diabetes.csv')
+data = pd.read_csv('data/diabetes/diabetes.csv')
 Y = np.array(data['Outcome'])
 del data['Outcome']
 data[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] = data[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']].replace(0,np.NaN)
@@ -37,7 +35,7 @@ X = np.array(data)
 
 #Splitting of dataset into Training set and testing set (80% and 20% respectively)
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
-
+"""
 with open('X_train', 'wb') as f:
     pickle.dump(X_train, f)
 with open('X_test', 'wb') as f:
@@ -45,7 +43,7 @@ with open('X_test', 'wb') as f:
 with open('Y_train', 'wb') as f:
     pickle.dump(Y_train, f)
 with open('Y_test', 'wb') as f:
-    pickle.dump(Y_test, f)
+    pickle.dump(Y_test, f)"""
 
 ############################
 #### TRAIN TARGET MODEL ####
@@ -73,8 +71,8 @@ model.compile(loss='sparse_categorical_crossentropy',
               optimizer="sgd",metrics=['accuracy'])
 model.fit(X_train, Y_train, batch_size=128, epochs=100, verbose=1, validation_data=(X_test, Y_test))
 
-with open('diabetes_classifier_NN', 'wb') as f:
-    pickle.dump(model, f)
+"""with open('diabetes_classifier_NN', 'wb') as f:
+    pickle.dump(model, f)"""
 
 """
 
@@ -113,7 +111,7 @@ export_graphviz(dtree, out_file=dot_data,
                 filled=True, rounded=True,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.write_png("diabetes_dtree_trained_original.png"))
+Image(graph.write_png("visualisations/diabetes/diabetes_dtree_trained_original.png"))
 
 ###########################
 ##### SYNTHESIZE DATA #####
@@ -146,27 +144,19 @@ def diabetesPredictProb(x):
     return list(model.predict(np.array([x]))[0])
 
 
-synthesizer = Synthesizer(2, 8, 1, 100, 0.85, 100,
+synthesizer = Synthesizer(2, 8, 1, 100, 0.9, 100,
                           diabetesRandomizeFunction, diabetesPredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb
 
-synthesizer.synthesize(1000, "diabetes_synthesized_data.csv")
+synthesizer.synthesize(1000, "data/diabetes/diabetes_synthesized_data.csv")
 
 #####################################################
 #### CREATE SHADOW MODEL IN FORM OF DECISION TREE ###
 #####################################################
 
 ## Load Data
-data_0 = pd.read_csv("training_class_0.csv",  header=None)
-data_0.columns = ['Pregnancies', 'Glcose', 'BloodPressre', 'SkinThickness',
-       'Inslin', 'BMI', 'DiabetesPedigreeFnction', 'Age']
-data_0["Label"] = 0
-data_1 = pd.read_csv("training_class_1.csv",  header=None)
-data_1.columns = ['Pregnancies', 'Glcose', 'BloodPressre', 'SkinThickness',
-       'Inslin', 'BMI', 'DiabetesPedigreeFnction', 'Age']
-data_1["Label"] = 1
-dataset = pd.concat([data_0, data_1], ignore_index=True)
+dataset = pd.read_csv("data/diabetes/diabetes_synthesized_data.csv",  header=None)
 array = dataset.values
 X = array[:,0:len(dataset.columns)-1]
 Y = array[:,len(dataset.columns)-1]
@@ -194,4 +184,4 @@ export_graphviz(dtree, out_file=dot_data,
                 filled=True, rounded=True,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.write_png("diabetes_dtree_trained_synthesized.png"))
+Image(graph.write_png("visualisations/diabetes/diabetes_dtree_trained_synthesized.png"))

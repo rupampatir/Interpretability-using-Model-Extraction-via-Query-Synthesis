@@ -22,25 +22,10 @@ warnings.filterwarnings('ignore')
 #########################################################
 
 #Loading dataset
-dataset = pd.read_csv('data/income/adult.csv')
-dataset = dataset.fillna(np.nan)
-# Reformat Column We Are Predicting: 0 means less than 50K. 1 means greater than 50K.
-dataset['income']=dataset['income'].map({'<=50K': 0, '>50K': 1, '<=50K.': 0, '>50K.': 1})
-Y = np.array(dataset['income'])
-
-# Fill Missing Category Entries
-dataset["workclass"] = dataset["workclass"].fillna("?")
-dataset["occupation"] = dataset["occupation"].fillna("?")
-dataset["native.country"] = dataset["native.country"].fillna("United-States")
-dataset = pd.concat([dataset,pd.get_dummies(dataset['sex'], prefix='sex')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['workclass'], prefix='workclass')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['education'], prefix='education')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['marital.status'], prefix='marital.status')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['occupation'], prefix='occupation')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['relationship'], prefix='relationship')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['race'], prefix='race')],axis=1)
-dataset = pd.concat([dataset,pd.get_dummies(dataset['native.country'], prefix='native.country')],axis=1)
-dataset.drop(labels=["income", "education.num", "sex", "workclass", "education", "marital.status", "occupation", "relationship", "race", "native.country"], axis = 1, inplace = True)
+dataset = pd.read_csv('data/animal/zoo.csv', index_col=0)
+Y = np.array(dataset['class_type'])
+Y = Y - 1
+del dataset['class_type']
 X = np.array(dataset)
 
 #Splitting of dataset into Training set and testing set (80% and 20% respectively)
@@ -66,7 +51,7 @@ model.add(Dense(256,input_shape=(X_train.shape[1],)))
 model.add(Activation('relu'))
 model.add(Dense(256,input_shape=(X_train.shape[1],)))
 model.add(Activation('relu'))
-model.add(Dense(2))
+model.add(Dense(7))
 model.add(Activation('softmax'))
 model.compile(loss='sparse_categorical_crossentropy',
               optimizer="sgd",metrics=['accuracy'])
@@ -90,7 +75,7 @@ export_graphviz(dtree, out_file=dot_data,
                 filled=True, rounded=True,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.write_png("visualisations/income/income_dtree_trained_original.png"))
+Image(graph.write_png("visualisations/animal/animal_dtree_trained_original.png"))
 
 ###########################
 ##### SYNTHESIZE DATA #####
@@ -98,14 +83,8 @@ Image(graph.write_png("visualisations/income/income_dtree_trained_original.png")
 
 print "Intializing Training Data Synthesis\n"
 
-def incomeRandomizeFunction(k, x, c):
-    x_age = random.randint(0, 100)
-    x_fnlwgt = random.randint(12285, 1484705)
-    x_capital_gain = random.randint(0, 99999)
-    x_capital_loss = random.randint(0, 4356)
-    x_hours_per_week = random.randint(0, 99)
-    x_one_hot = [random.randint(0, 1) for i in range(102)]
-    x_temp = [x_age, x_fnlwgt, x_capital_gain, x_capital_loss, x_hours_per_week] + x_one_hot
+def animalRandomizeFunction(k, x, c):
+    x_temp = [random.randint(0, 1) for i in range(16)]
 
     if len(x) == 0:
         return x_temp
@@ -117,23 +96,23 @@ def incomeRandomizeFunction(k, x, c):
 
     return x
 
-def incomePredictProb(x):
+def animalPredictProb(x):
     return list(model.predict(np.array([x]))[0])
 
 
-synthesizer = Synthesizer(2, 107, 1, 100, 0.85, 100,
-                          incomeRandomizeFunction, incomePredictProb)
+synthesizer = Synthesizer(7, 16, 1, 100, 0.85, 100,
+                          animalRandomizeFunction, animalPredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb
 
-synthesizer.synthesize(1000, "data/income/income_synthesized_data.csv")
+synthesizer.synthesize(1000, "data/animal/animal_synthesized_data.csv")
 
 #####################################################
 #### CREATE SHADOW MODEL IN FORM OF DECISION TREE ###
 #####################################################
 
 ## Load Data
-dataset = pd.read_csv("data/income/income_synthesized_data.csv",  header=None)
+dataset = pd.read_csv("data/animal/animal_synthesized_data.csv",  header=None)
 array = dataset.values
 X = array[:,0:len(dataset.columns)-1]
 Y = array[:,len(dataset.columns)-1]
@@ -161,4 +140,4 @@ export_graphviz(dtree, out_file=dot_data,
                 filled=True, rounded=True,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.write_png("visualisations/income/income_dtree_trained_synthesized.png"))
+Image(graph.write_png("visualisations/animal/animal_dtree_trained_synthesized.png"))

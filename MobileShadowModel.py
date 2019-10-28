@@ -105,7 +105,7 @@ def mobilePredictProb(x):
     return list(model.predict_proba([x])[0])
 
 
-synthesizer = Synthesizer(4, 19, 1, 100, 0.85, 100,
+synthesizer = Synthesizer(4, 19, 1, 100, 0.9, 100,
                           mobileRandomizeFunction, mobilePredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb

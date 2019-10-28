@@ -64,7 +64,7 @@ print("\n\nAccuracy of Neural Network (Target BB Model): %s%%\n" % str(accuracy*
 results.write("\n\nAccuracy of Neural Network (Target BB Model): %s%%\n" % str(accuracy*100.0))
 dtree = DecisionTreeClassifier(random_state=0)
 dtree.fit(X_train,Y_train)
-
+print predictionsNN
 ## Test accuracy and similarity
 predictionsDT = dtree.predict(X_test)
 print("Accuracy of DT (trained and tested on original data): %s%%\n" % (100*accuracy_score(Y_test, predictionsDT)))
@@ -84,12 +84,12 @@ Image(graph.write_png("visualisations/animal/animal_dtree_trained_original.png")
 ###########################
 ##### SYNTHESIZE DATA #####
 ###########################
-
+""
 print "Intializing Training Data Synthesis\n"
 
 def animalRandomizeFunction(k, x, c):
     x_temp = [random.randint(0, 1) for i in range(16)]
-
+    x_temp[12] = random.randint(0,8)
     if len(x) == 0:
         return x_temp
 
@@ -104,7 +104,7 @@ def animalPredictProb(x):
     return list(model.predict(np.array([x]))[0])
 
 
-synthesizer = Synthesizer(7, 16, 1, 100, 0.8, 100,
+synthesizer = Synthesizer(7, 16, 1, 100, 0.9, 100,
                           animalRandomizeFunction, animalPredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb
@@ -147,3 +147,4 @@ export_graphviz(dtree, out_file=dot_data,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
 Image(graph.write_png("visualisations/animal/animal_dtree_trained_synthesized.png"))
+""

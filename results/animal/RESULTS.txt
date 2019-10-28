@@ -1,0 +1,7 @@
+
+
+Accuracy of Neural Network (Target BB Model): 95.2380955219%
+Accuracy of DT (trained and tested on original data): 95.23809523809523%
+Classification similarity of NN and DT trained on target model dataset: 95.23809523809523%
+Classification similarity of NN and DT trained on synthesized dataset: 93.0327868852459%
+Accuracy of DT (trained on synthesized and tested on original): 95.23809523809523%

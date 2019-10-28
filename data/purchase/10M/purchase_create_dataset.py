@@ -7,7 +7,7 @@ num_of_features_variation = [10, 20, 30, 40, 50, 75, 100]
 class_variation = [2,5,10,20,50, 75, 100]
 
 ## Read dataset ##
-data = pd.read_csv("data/purchase/10M/xaa")
+data = pd.read_csv("xaa")
 #categories = list(data['category'].value_counts()[0:600].index.values) #if using most frequently transacted products
 for num_of_features in num_of_features_variation:
     print "num of features ",

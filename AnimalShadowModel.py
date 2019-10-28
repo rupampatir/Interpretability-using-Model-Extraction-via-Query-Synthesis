@@ -30,6 +30,7 @@ X = np.array(dataset)
 
 #Splitting of dataset into Training set and testing set (80% and 20% respectively)
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+results = open("results/animal/RESULTS.txt","a") 
 
 ############################
 #### TRAIN TARGET MODEL ####
@@ -55,18 +56,21 @@ model.add(Dense(7))
 model.add(Activation('softmax'))
 model.compile(loss='sparse_categorical_crossentropy',
               optimizer="sgd",metrics=['accuracy'])
-model.fit(X_train, Y_train, batch_size=128, epochs=10, verbose=1, validation_data=(X_test, Y_test))
+model.fit(X_train, Y_train, batch_size=128, epochs=1000, verbose=1, validation_data=(X_test, Y_test))
 
 loss, accuracy = model.evaluate(X_test,Y_test, verbose=0)
 predictionsNN = [np.argmax(x) for x in model.predict(np.array(X_test))]
 print("\n\nAccuracy of Neural Network (Target BB Model): %s%%\n" % str(accuracy*100.0))
+results.write("\n\nAccuracy of Neural Network (Target BB Model): %s%%\n" % str(accuracy*100.0))
 dtree = DecisionTreeClassifier(random_state=0)
 dtree.fit(X_train,Y_train)
 
 ## Test accuracy and similarity
 predictionsDT = dtree.predict(X_test)
 print("Accuracy of DT (trained and tested on original data): %s%%\n" % (100*accuracy_score(Y_test, predictionsDT)))
+results.write("Accuracy of DT (trained and tested on original data): %s%%\n" % (100*accuracy_score(Y_test, predictionsDT)))
 print("Classification similarity of NN and DT trained on target model dataset: %s%%\n" % (np.sum(predictionsDT==predictionsNN)*1.0/len(predictionsDT)*100))
+results.write("Classification similarity of NN and DT trained on target model dataset: %s%%\n" % (np.sum(predictionsDT==predictionsNN)*1.0/len(predictionsDT)*100))
 
 #Visualisation
 dot_data = StringIO()
@@ -100,7 +104,7 @@ def animalPredictProb(x):
     return list(model.predict(np.array([x]))[0])
 
 
-synthesizer = Synthesizer(7, 16, 1, 100, 0.85, 100,
+synthesizer = Synthesizer(7, 16, 1, 100, 0.8, 100,
                           animalRandomizeFunction, animalPredictProb)
                           #c, kmax, kmin, iter_max, conf_min, rej_max,
                           #randomizeFunction, predictProb
@@ -128,10 +132,12 @@ dtree.fit(X_train,Y_train)
 ## Test accuracy of Decision Tree trained on synthesized and tested on synthesized
 predictions = dtree.predict(X_validation)
 print("Classification similarity of NN and DT trained on synthesized dataset: %s%%\n" % (100*accuracy_score(Y_validation, predictions)))
+results.write("Classification similarity of NN and DT trained on synthesized dataset: %s%%\n" % (100*accuracy_score(Y_validation, predictions)))
 
 ## Test accuracy of Decision Tree trained on synthesized and tested on original
 predictions = dtree.predict(X_test)
 print("Accuracy of DT (trained on synthesized and tested on original): %s%%\n" % (100*accuracy_score(Y_test, predictions)))
+results.write("Accuracy of DT (trained on synthesized and tested on original): %s%%\n" % (100*accuracy_score(Y_test, predictions)))
 
 ## Visualisation
 dot_data = StringIO()

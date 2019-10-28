@@ -1,0 +1,108 @@
+Results for 10 features and 2 classes
+
+
+Accuracy of Neural Network (Target BB Model): 100.0%
+Accuracy of RF (trained and tested on original data): 100.0%
+Classification similarity of NN and RF trained on target model dataset: 100.0%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 100.0%
+Accuracy of Random Forest (trained on synthesized and tested on original): 100.0%
+
+
+************************************************
+
+Results for 10 features and 5 classes
+
+
+Accuracy of Neural Network (Target BB Model): 100.0%
+Accuracy of RF (trained and tested on original data): 100.0%
+Classification similarity of NN and RF trained on target model dataset: 100.0%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 100.0%
+Accuracy of Random Forest (trained on synthesized and tested on original): 100.0%
+
+
+************************************************
+
+Results for 10 features and 10 classes
+
+
+Accuracy of Neural Network (Target BB Model): 100.0%
+Accuracy of RF (trained and tested on original data): 99.94797086368366%
+Classification similarity of NN and RF trained on target model dataset: 99.94797086368366%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 100.0%
+Accuracy of Random Forest (trained on synthesized and tested on original): 99.89594172736732%
+
+
+************************************************
+
+Results for 10 features and 20 classes
+
+
+Accuracy of Neural Network (Target BB Model): 99.9479711056%
+Accuracy of RF (trained and tested on original data): 100.0%
+Classification similarity of NN and RF trained on target model dataset: 99.94797086368366%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 100.0%
+Accuracy of Random Forest (trained on synthesized and tested on original): 99.94797086368366%
+
+
+************************************************
+
+
+
+************************************************
+
+Results for 20 features and 2 classes (0.85)
+
+
+Accuracy of Neural Network (Target BB Model): 99.5317399502%
+Accuracy of RF (trained and tested on original data): 96.20187304890739%
+Classification similarity of NN and RF trained on target model dataset: 95.9417273673257%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 92.125%
+Accuracy of Random Forest (trained on synthesized and tested on original): 92.24765868886577%
+
+
+************************************************
+
+Results for 20 features and 2 classes
+
+
+Accuracy of Neural Network (Target BB Model): 99.0634739399%
+Accuracy of RF (trained and tested on original data): 95.62955254942767%
+Classification similarity of NN and RF trained on target model dataset: 95.62955254942767%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 92.83333333333333%
+Accuracy of Random Forest (trained on synthesized and tested on original): 92.19562955254943%
+
+
+************************************************
+
+Results for 20 features and 5 classes
+
+
+Accuracy of Neural Network (Target BB Model): 62.8511965275%
+Accuracy of RF (trained and tested on original data): 95.47346514047867%
+Classification similarity of NN and RF trained on target model dataset: 64.04786680541103%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 93.90125847047435%
+Accuracy of Random Forest (trained on synthesized and tested on original): 70.13527575442248%
+
+
+************************************************
+
+Results for 20 features and 10 classes
+
+
+Accuracy of Neural Network (Target BB Model): 74.6097803116%
+Accuracy of RF (trained and tested on original data): 95.16129032258065%
+Classification similarity of NN and RF trained on target model dataset: 74.86992715920915%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 90.95%
+Accuracy of Random Forest (trained on synthesized and tested on original): 77.00312174817898%
+
+
+************************************************
+
+Results for 20 features and 20 classes
+
+
+Accuracy of Neural Network (Target BB Model): 89.8543179035%
+Accuracy of RF (trained and tested on original data): 93.75650364203955%
+Classification similarity of NN and RF trained on target model dataset: 87.30489073881374%
+Classification similarity of NN and Random Forest trained on synthesized dataset: 95.72500000000001%
+Accuracy of Random Forest (trained on synthesized and tested on original): 87.14880332986472%

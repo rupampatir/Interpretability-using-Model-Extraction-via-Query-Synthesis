@@ -22,10 +22,11 @@ warnings.filterwarnings('ignore')
 #########################################################
 
 #Loading dataset
-dataset = pd.read_csv('data/mobile/train.csv', index_col=0)
+dataset = pd.read_csv('data/mobile/train.csv')
 Y = np.array(dataset['price_range'])
 del dataset['price_range']
 X = np.array(dataset)
+results = open("results/mobile/RESULTS.txt","a") 
 
 #Splitting of dataset into Training set and testing set (80% and 20% respectively)
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
@@ -34,38 +35,23 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_
 #### TRAIN TARGET MODEL ####
 ############################
 
-#Single layer architecture
-model = Sequential()
-model.add(Dense(107,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(64,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(64,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(128,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(128,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(256,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(256,input_shape=(X_train.shape[1],)))
-model.add(Activation('relu'))
-model.add(Dense(4))
-model.add(Activation('softmax'))
-model.compile(loss='sparse_categorical_crossentropy',
-              optimizer="sgd",metrics=['accuracy'])
-model.fit(X_train, Y_train, batch_size=128, epochs=10, verbose=1, validation_data=(X_test, Y_test))
+from sklearn.neighbors import KNeighborsClassifier
+model = KNeighborsClassifier(n_neighbors=10)
+model.fit(X_train,Y_train)
 
-loss, accuracy = model.evaluate(X_test,Y_test, verbose=0)
-predictionsNN = [np.argmax(x) for x in model.predict(np.array(X_test))]
-print("\n\nAccuracy of Neural Network (Target BB Model): %s%%\n" % str(accuracy*100.0))
+accuracy = model.score(X_test,Y_test)
+predictionskNN = model.predict(X_test)
+print("\n\nAccuracy of kNN (Target BB Model): %s%%\n" % str(accuracy*100.0))
+results.write("\n\nAccuracy of kNN (Target BB Model): %s%%\n" % str(accuracy*100.0))
 dtree = DecisionTreeClassifier(random_state=0)
 dtree.fit(X_train,Y_train)
 
 ## Test accuracy and similarity
 predictionsDT = dtree.predict(X_test)
 print("Accuracy of DT (trained and tested on original data): %s%%\n" % (100*accuracy_score(Y_test, predictionsDT)))
-print("Classification similarity of NN and DT trained on target model dataset: %s%%\n" % (np.sum(predictionsDT==predictionsNN)*1.0/len(predictionsDT)*100))
+results.write("Accuracy of DT (trained and tested on original data): %s%%\n" % (100*accuracy_score(Y_test, predictionsDT)))
+print("Classification similarity of kNN and DT trained on target model dataset: %s%%\n" % (np.sum(predictionsDT==predictionskNN)*1.0/len(predictionsDT)*100))
+results.write("Classification similarity of kNN and DT trained on target model dataset: %s%%\n" % (np.sum(predictionsDT==predictionskNN)*1.0/len(predictionsDT)*100))
 
 #Visualisation
 dot_data = StringIO()
@@ -83,6 +69,7 @@ Image(graph.write_png("visualisations/mobile/mobile_dtree_trained_original.png")
 print "Intializing Training Data Synthesis\n"
 
 def mobileRandomizeFunction(k, x, c):
+    x_battery_power = random.randint(500, 2000)
     x_blue = random.randint(0, 1)
     x_clock_speed = round(random.uniform(0.5, 3),1)
     x_dual_sim = random.randint(0, 1)
@@ -102,7 +89,7 @@ def mobileRandomizeFunction(k, x, c):
     x_three_g = random.randint(0, 1)
     x_touch_screen = random.randint(0, 1)
     x_wifi = random.randint(0, 1)
-    x_temp = [x_blue, x_clock_speed, x_dual_sim, x_fc, x_four_g, x_int_memory, x_m_dep, x_mobile_wt, x_n_cores, x_pc, x_px_height, x_px_width, x_ram, x_sc_h, x_sc_w, x_talk_time, x_three_g, x_touch_screen, x_wifi]
+    x_temp = [x_battery_power, x_blue, x_clock_speed, x_dual_sim, x_fc, x_four_g, x_int_memory, x_m_dep, x_mobile_wt, x_n_cores, x_pc, x_px_height, x_px_width, x_ram, x_sc_h, x_sc_w, x_talk_time, x_three_g, x_touch_screen, x_wifi]
 
     if len(x) == 0:
         return x_temp
@@ -115,7 +102,7 @@ def mobileRandomizeFunction(k, x, c):
     return x
 
 def mobilePredictProb(x):
-    return list(model.predict(np.array([x]))[0])
+    return list(model.predict_proba([x])[0])
 
 
 synthesizer = Synthesizer(4, 19, 1, 100, 0.85, 100,
@@ -145,11 +132,13 @@ dtree.fit(X_train,Y_train)
 
 ## Test accuracy of Decision Tree trained on synthesized and tested on synthesized
 predictions = dtree.predict(X_validation)
-print("Classification similarity of NN and DT trained on synthesized dataset: %s%%\n" % (100*accuracy_score(Y_validation, predictions)))
+print("Classification similarity of kNN and DT trained on synthesized dataset: %s%%\n" % (100*accuracy_score(Y_validation, predictions)))
+results.write("Classification similarity of kNN and DT trained on synthesized dataset: %s%%\n" % (100*accuracy_score(Y_validation, predictions)))
 
 ## Test accuracy of Decision Tree trained on synthesized and tested on original
 predictions = dtree.predict(X_test)
 print("Accuracy of DT (trained on synthesized and tested on original): %s%%\n" % (100*accuracy_score(Y_test, predictions)))
+results.write("Accuracy of DT (trained on synthesized and tested on original): %s%%\n" % (100*accuracy_score(Y_test, predictions)))
 
 ## Visualisation
 dot_data = StringIO()

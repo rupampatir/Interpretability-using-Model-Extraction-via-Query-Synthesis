@@ -1,0 +1,7 @@
+
+
+Accuracy of kNN (Target BB Model): 95.0%
+Accuracy of DT (trained and tested on original data): 84.25%
+Classification similarity of kNN and DT trained on target model dataset: 84.25%
+Classification similarity of kNN and DT trained on synthesized dataset: 97.0%
+Accuracy of DT (trained on synthesized and tested on original): 84.5%

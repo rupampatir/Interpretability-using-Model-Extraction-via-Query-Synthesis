@@ -26,6 +26,7 @@ dataset = pd.read_csv('data/animal/zoo.csv', index_col=0)
 Y = np.array(dataset['class_type'])
 Y = Y - 1
 del dataset['class_type']
+col_names = list(dataset.columns)
 X = np.array(dataset)
 
 #Splitting of dataset into Training set and testing set (80% and 20% respectively)
@@ -142,7 +143,7 @@ results.write("Accuracy of DT (trained on synthesized and tested on original): %
 ## Visualisation
 dot_data = StringIO()
 export_graphviz(dtree, out_file=dot_data, 
-                feature_names=dataset.columns[:len(dataset.columns)-1],
+                feature_names=col_names,
                 filled=True, rounded=True,
                 special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
